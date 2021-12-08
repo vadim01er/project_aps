@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<div class="container">
+    <header th:fragment="navigation"
+            class="navbar navbar-dark bg-dark navbar-expand-lg container">
+        <a class="navbar-brand" href="#">Панель навигации</a>
+        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+            <li><a th:href="${'#'}" class="nav-link px-2 link-dark">Главная</a></li>
+            <li><a th:href="${'#'}" class="nav-link px-2 link-dark">Курсы</a></li>
+            <li><a th:href="${'#'}" class="nav-link px-2 link-dark">Новости</a></li>
+        </ul>
+    </header>
+
+</div>

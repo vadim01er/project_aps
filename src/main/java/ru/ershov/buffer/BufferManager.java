@@ -2,7 +2,7 @@ package ru.ershov.buffer;
 
 import lombok.Getter;
 import ru.ershov.Main;
-import ru.ershov.device.DeviceManager;
+import ru.ershov.dto.AnswerStep;
 import ru.ershov.source.SourceManager;
 
 import java.util.ArrayList;
@@ -15,38 +15,51 @@ public class BufferManager {
     private int countRequest;
     private double allTime = 0;
     private int countBuffers;
-    private final List<Buffer> buffers;
+    private final Buffer[] buffers;
     private final Main main;
+
+    AnswerStep[] answerSteps;
+
+    AnswerStep ref;
 
     public BufferManager(int countBuffers, Main main) {
         this.main = main;
         this.countBuffers = countBuffers;
-        buffers = new ArrayList<>(countBuffers);
+        buffers = new Buffer[countBuffers];
+        answerSteps = new AnswerStep[countBuffers];
         for (int i = 0; i < countBuffers; i++) {
-            buffers.add(new Buffer(i + 1, main));
+            buffers[i] = new Buffer(i + 1, main);
         }
+        System.out.println(buffers.length);
     }
 
     public double extracted(SourceManager.Request poll, SourceManager sources) {
-        for (Buffer buffer : buffers) {
+        for (int i = 0; i < buffers.length; i++) {
+            Buffer buffer = buffers[i];
+            System.out.println(i);
             if (buffer.isEmpty()) {
+                System.out.println("find " + buffer.getNumber());
                 buffer.add(poll, poll.getSourceNumber());
+                answerSteps[i] = buffer.getAnswerStep();
                 countRequest++;
                 break;
             }
         }
         if (!poll.isInBuffer()) {
-            Buffer buffer = buffers.get(countBuffers - 1);
+            Buffer buffer = buffers[countBuffers - 1];
 
             SourceManager.Request req = buffer.getRequest();
             req.setInRefusal(true);
-
+            ref = new AnswerStep();
+            ref.setNameSource(req.getName());
             allTime += buffer.delete();
+            answerSteps[countBuffers - 1] = buffer.getAnswerStep();
             sources.markQueryOutput(buffer.getNumberSource() - 1);
 
-            sources.setTimeBuffer(buffer.getNumberSource() - 1, buffers.get(countBuffers - 1).getTForSource());
+            sources.setTimeBuffer(buffer.getNumberSource() - 1, buffers[countBuffers - 1].getTForSource());
 
             buffer.add(poll, poll.getSourceNumber());
+            answerSteps[countBuffers - 1] = buffer.getAnswerStep();
             countRequest++;
             return buffer.getTimeAdd();
         }
@@ -77,30 +90,31 @@ public class BufferManager {
             }
 
             int numberBuffer = 0;
-            for (int i = 0; i < buffers.size(); i++) {
-                if (buffers.get(i).getNumberSource() == numberSource
-                        && buffers.get(i).getRequest().getNumber() < numberRequest
-                        && buffers.get(i).getRequest().getNumber() != 0
+            for (int i = 0; i < buffers.length; i++) {
+                if (buffers[i].getNumberSource() == numberSource
+                        && buffers[i].getRequest().getNumber() < numberRequest
+                        && buffers[i].getRequest().getNumber() != 0
                 ) {
-                    numberRequest = buffers.get(i).getRequest().getNumber();
-                    req = buffers.get(i).getRequest();
+                    numberRequest = buffers[i].getRequest().getNumber();
+                    req = buffers[i].getRequest();
                     numberBuffer = i;
                 }
             }
 
-            allTime += buffers.get(numberBuffer).delete();
-            main.getSourceManager().setTimeBuffer(numberSource - 1, buffers.get(numberBuffer).getTForSource());
+            allTime += buffers[numberBuffer].delete();
+            answerSteps[numberBuffer] = buffers[numberBuffer].getAnswerStep();
+            main.getSourceManager().setTimeBuffer(numberSource - 1, buffers[numberBuffer].getTForSource());
 
-            main.setSystemTime(buffers.get(numberBuffer).getTimeOut());
+            main.setSystemTime(buffers[numberBuffer].getTimeOut());
             if (req != null) {
                 main.getDeviceManager().setRequest(req, numberSource);
             }
 
-            for (int i = numberBuffer; i < buffers.size() - 1; i++) {
-                buffers.set(i, buffers.get(i + 1));
-            }
-            buffers.get(main.getCountBuffers() - 1).clear();
-            buffers.get(main.getCountBuffers() - 1).setNumber(main.getCountBuffers());
+//            for (int i = numberBuffer; i < buffers.length - 1; i++) {
+//                buffers[i] = buffers[i + 1];
+//            }
+            buffers[main.getCountBuffers() - 1].clear();
+//            buffers.get(main.getCountBuffers() - 1).setNumber(main.getCountBuffers());
         }
     }
 

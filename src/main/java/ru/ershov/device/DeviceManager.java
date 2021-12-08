@@ -3,9 +3,12 @@ package ru.ershov.device;
 import lombok.Getter;
 import lombok.Setter;
 import ru.ershov.Main;
+import ru.ershov.dto.AnswerDevice;
+import ru.ershov.dto.AnswerStep;
 import ru.ershov.source.SourceManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,10 +19,13 @@ public class DeviceManager {
     private int lastDevice;
     private final ArrayList<Device> devices;
     private final Main main;
+    AnswerStep[] answerSteps;
+
 
     public DeviceManager(int countDevices, Main main) {
         this.main = main;
         devices = new ArrayList<>(countDevices);
+        answerSteps = new AnswerStep[countDevices];
         for (int i = 0; i < countDevices; i++) {
             devices.add(new Device(i + 1, main));
         }
@@ -49,6 +55,7 @@ public class DeviceManager {
             systemTime = minTr;
             int numberSource = device.getNumberSource();
             sumAllTime(devices.get(numberDevice - 1).delete());
+            answerSteps[numberDevice - 1] = devices.get(numberDevice - 1).getAnswerStep();
             countRequest++;
             main.getSourceManager().setTimeService(numberSource - 1, devices.get(numberDevice - 1).getTForSource());
         }
@@ -70,6 +77,7 @@ public class DeviceManager {
 
     public void setRequest(SourceManager.Request req, int numberSource) {
         devices.get(lastDevice - 1).add(req, numberSource);
+        answerSteps[lastDevice - 1] = devices.get(lastDevice - 1).getAnswerStep();
         main.setSystemTime(devices.get(lastDevice - 1).getTimeAdd()); //Фиксируем время поступления заявки на прибор
     }
 
@@ -77,9 +85,11 @@ public class DeviceManager {
         allTime += time;
     }
 
-    public void print() {
+    public List<AnswerDevice> print() {
+        List<AnswerDevice> answerDevices = new ArrayList<>();
         for (Device d : devices) {
-            d.printAnswer();
+            answerDevices.add(d.printAnswer());
         }
+        return answerDevices;
     }
 }

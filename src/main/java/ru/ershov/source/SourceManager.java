@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import ru.ershov.Main;
+import ru.ershov.dto.AnswerColumn;
+import ru.ershov.dto.AnswerStep;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -19,10 +21,12 @@ public class SourceManager {
     private final Main main;
     List<Source> sources;
     Queue<Request> requestList;
+    AnswerStep[] answerSteps;
 
     public SourceManager(int countSources, Main main) {
         this.main = main;
         sources = new ArrayList<>(countSources);
+        answerSteps = new AnswerStep[countSources];
         for (int i = 0; i < countSources; i++) {
             sources.add(new Source(i + 1));
         }
@@ -51,6 +55,7 @@ public class SourceManager {
 
     public void generate(int i) {
         requestList.add(sources.get(i).generate());
+        answerSteps[i] = sources.get(i).getAnswerStep();
     }
 
     public Request peek() {
@@ -61,10 +66,12 @@ public class SourceManager {
         sources.get(i).addTimeObc(tForSource); // прибавление, а не замена
     }
 
-    public void print() {
+    public List<AnswerColumn> print() {
+        List<AnswerColumn> answerColumns = new ArrayList<>();
         for (Source s : sources) {
-            s.printAnswer();
+            answerColumns.add(s.printAnswer());
         }
+        return answerColumns;
     }
 
     @Getter

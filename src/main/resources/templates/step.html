@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Main</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!--CSS-->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+  <link type="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.css"
+        rel="stylesheet" type="text/css"/>
+
+  <!--BOOTSTRAP ICON-->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+</head>
+<body>
+<!--navigation-->
+<header th:fragment="navigation"
+        class="navbar navbar-dark bg-dark navbar-expand-lg container">
+  <a class="navbar-brand" href="#">Панель навигации</a>
+  <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+    <li><a th:href="${'/main'}" class="nav-link px-2 link-dark">Главная</a></li>
+  </ul>
+</header>
+
+<div class="container mt-4">
+  <a role="button" class="btn btn-primary mb-3" th:href="${'/step'}">Шаг</a>
+  <!--source-->
+  <div class="row gutters-sm">
+    <div class="col mb-3 ">
+      <div th:each="source, iter: ${sources}">
+        <div class="card mb-3 ">
+          <div class="card-body">
+            <h5 class="card-title">Source: <span th:text="${iter.index + 1}"></span></h5>
+            <p class="card-text">Сейчас <span th:text="${source == null? '':source.getNameSource()}"></span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col mb-3 ">
+      <div th:each="buffer, iter2: ${buffers}">
+        <div class="card mb-3 ">
+          <div class="card-body">
+            <h5 class="card-title">Buffer: <span th:text="${iter2.index + 1}"></span></h5>
+            <p class="card-text">Сейчас <span th:text="${buffer == null? '':buffer.getNameSource()}"></span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col mb-3 ">
+      <div th:each="device, iter3: ${devices}">
+        <div class="card mb-3 ">
+          <div class="card-body">
+            <h5 class="card-title">Buffer: <span th:text="${iter3.index + 1}"></span></h5>
+            <p class="card-text">Сейчас <span th:text="${device == null? '' :device.getNameSource()}"></span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--        <div class="card col mb-3">-->
+    <!--          <div class="card-body">-->
+    <!--            <table class="table table-bordered">-->
+    <!--              <thead>-->
+    <!--              <tr>-->
+    <!--                <th scope="col">Имя</th>-->
+    <!--                <th scope="col">Номер</th>-->
+    <!--                <th scope="col">Время</th>-->
+    <!--                <th scope="col">Тип</th>-->
+    <!--                <th scope="col">Количество запросов</th>-->
+    <!--                <th scope="col">Количество отказанных</th>-->
+    <!--              </tr>-->
+    <!--              </thead>-->
+    <!--              <tbody>-->
+    <!--              <div th:each="source: ${sources}">-->
+    <!--                <tr>-->
+    <!--                  <td th:text="${source.getName()}"></td>-->
+    <!--                  <td th:text="${source.getNameSource()}"></td>-->
+    <!--                  <td th:text="${source.getTime()}"></td>-->
+    <!--                  <td th:text="${source.getType()}"></td>-->
+    <!--                  <td th:text="${source.getCountRequest()}"></td>-->
+    <!--                  <td th:text="${source.getCountRefusal()}"></td>-->
+    <!--                </tr>-->
+    <!--              </div>-->
+    <!--              </tbody>-->
+    <!--            </table>-->
+    <!--          </div>-->
+    <!--        </div>-->
+  </div>
+
+  <div class="row gutters-sm">
+    <div class="col mb-3 ">
+      <div class="card bg-danger mb-3 ">
+        <div class="card-body">
+          <h5 class="card-title">Refusal:</span></h5>
+          <p class="card-text">Сейчас <span th:text="${refusal.get(0)== null ? '' :refusal.get(0).getNameSource()}"></span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--buffer-->
+  <!--    <div class="row gutters-sm">-->
+  <!--      <div class="card col mb-3">-->
+  <!--        <div class="card-body">-->
+  <!--          <table class="table table-bordered">-->
+  <!--            <thead>-->
+  <!--            <tr>-->
+  <!--              <th scope="col">Имя</th>-->
+  <!--              <th scope="col">Номер</th>-->
+  <!--            </tr>-->
+  <!--            </thead>-->
+  <!--            <tbody>-->
+  <!--            <div th:each="buffer: ${buffers}">-->
+  <!--              <tr>-->
+  <!--                <td th:text="${buffer == null? '':buffer.getName()}"></td>-->
+  <!--                <td th:text="${buffer == null? '':buffer.getNameSource()}"></td>-->
+  <!--              </tr>-->
+  <!--            </div>-->
+  <!--            </tbody>-->
+  <!--          </table>-->
+  <!--        </div>-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <!--device-->
+  <!--  <div class="row gutters-sm">-->
+  <!--    <div class="card col mb-3">-->
+  <!--      <div class="card-body">-->
+  <!--        <table class="table table-bordered">-->
+  <!--          <thead>-->
+  <!--          <tr>-->
+  <!--            <th scope="col">Имя</th>-->
+  <!--            <th scope="col">Номер</th>-->
+  <!--            <th scope="col">Время</th>-->
+  <!--            <th scope="col">Тип</th>-->
+  <!--          </tr>-->
+  <!--          </thead>-->
+  <!--          <tbody>-->
+  <!--          <div th:each="device: ${devices}">-->
+  <!--            <tr>-->
+  <!--              <td th:text="${device.getName()}"></td>-->
+  <!--              <td th:text="${device.getNameSource()}"></td>-->
+  <!--              <td th:text="${device.getTime()}"></td>-->
+  <!--              <td th:text="${device.getType()}"></td>-->
+  <!--            </tr>-->
+  <!--          </div>-->
+  <!--          </tbody>-->
+  <!--        </table>-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <!--  </div>-->
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"
+        integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF"
+        crossorigin="anonymous"></script>
+
+</body>
+</html>
